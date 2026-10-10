@@ -17,8 +17,23 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: minikube-m02
+
       securityContext:
         fsGroup: 1000
+
+      initContainers:
+        - name: fix-jenkins-home-permissions
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - chown -R 1000:1000 /var/jenkins_home
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts-jdk21
@@ -27,6 +42,7 @@ spec:
               containerPort: 8080
             - name: agent
               containerPort: 50000
+
           resources:
             requests:
               cpu: 250m
@@ -34,6 +50,15 @@ spec:
             limits:
               cpu: "1"
               memory: 1Gi
+
+          startupProbe:
+            httpGet:
+              path: /login
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+
           readinessProbe:
             httpGet:
               path: /login
@@ -42,16 +67,11 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 12
-          startupProbe:
-            httpGet:
-              path: /login
-              port: http
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 30
+
           volumeMounts:
             - name: jenkins-data
               mountPath: /var/jenkins_home
+
       volumes:
         - name: jenkins-data
           persistentVolumeClaim:
