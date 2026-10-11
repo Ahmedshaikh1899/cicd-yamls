@@ -1,3 +1,4 @@
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -5,8 +6,25 @@ metadata:
   namespace: cicd
 rules:
   - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["create", "delete", "get", "list", "watch"]
+    resources:
+      - pods
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+
   - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get"]
+    resources:
+      - pods/exec
+    verbs:
+      - create
+      - get
+
+  - apiGroups: [""]
+    resources:
+      - pods/log
+    verbs:
+      - get
+
