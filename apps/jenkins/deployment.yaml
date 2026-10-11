@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +16,8 @@ spec:
       labels:
         app: jenkins
     spec:
+      serviceAccountName: jenkins-controller
+
       nodeSelector:
         kubernetes.io/hostname: minikube-m02
 
@@ -76,3 +79,4 @@ spec:
         - name: jenkins-data
           persistentVolumeClaim:
             claimName: jenkins-data
+

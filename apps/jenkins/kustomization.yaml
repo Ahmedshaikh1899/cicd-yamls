@@ -8,3 +8,5 @@ resources:
   - agent-serviceaccount.yaml
   - agent-role.yaml
   - agent-rolebinding.yaml
+  - controller-serviceaccount.yaml
+  - controller-rolebinding.yaml
